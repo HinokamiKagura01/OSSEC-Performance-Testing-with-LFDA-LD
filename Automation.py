@@ -23,23 +23,7 @@ def convert_to_logs(input_dir, output_dir):
                 shutil.copyfile(source_file, target_file)
                 print(f"Converted {source_file} to {target_file}")
 
-# Step 2: Preprocess ADFA LD data
-def preprocess_adfa_ld(data_dir, output_dir):
-    if not os.path.exists(data_dir):
-        print(f"Data directory '{data_dir}' does not exist.")
-        return
-
-    for root, dirs, files in os.walk(data_dir):
-        for file in files:
-            if file.endswith(".txt"):
-                src_file = os.path.join(root, file)
-                dest_file = os.path.join(output_dir, os.path.relpath(src_file, data_dir))
-                dest_dir = os.path.dirname(dest_file)
-                os.makedirs(dest_dir, exist_ok=True)
-                shutil.copy(src_file, dest_file)
-                print(f"Copied {src_file} to {dest_file}")
-
-# Step 3: Read and process log files
+# Step 2: Read and process log files
 def read_log_files(log_directory):
     if os.path.exists(log_directory):
         for filename in os.listdir(log_directory):
@@ -51,7 +35,7 @@ def read_log_files(log_directory):
     else:
         print(f"Directory '{log_directory}' does not exist.")
 
-# Step 4: Read and concatenate NetFlow files
+# Step 3: Read and concatenate NetFlow files
 def read_netflow_files(directory):
     data_frames = []
     if not os.path.exists(directory):
@@ -72,7 +56,7 @@ def read_netflow_files(directory):
 
     return pd.concat(data_frames, ignore_index=True)
 
-# Step 5: Process data for suspicious activity
+# Step 4: Process data for suspicious activity
 def process_data(df):
     print("Data Overview:")
     print(df.info())
@@ -85,7 +69,7 @@ def process_data(df):
     print("\nSuspicious Traffic:")
     print(suspicious_traffic)
 
-# Step 6: Parse and analyze OSSEC alerts
+# Step 5: Parse and analyze OSSEC alerts
 def parse_alerts(alerts_log):
     if not os.path.exists(alerts_log):
         print(f"Alerts log file '{alerts_log}' does not exist.")
@@ -121,7 +105,7 @@ def analyze_alerts(alerts):
     else:
         print("No alerts to plot.")
 
-# Step 7: Evaluate IDS performance
+# Step 6: Evaluate IDS performance
 def evaluate_ids(train_data, train_labels, test_data, test_labels):
     # Replace with actual IDS training and prediction
     ids_predictions = np.random.randint(2, size=len(test_labels))  # Example random predictions
@@ -137,7 +121,7 @@ def evaluate_ids(train_data, train_labels, test_data, test_labels):
 
     return tpr, fpr, precision, recall, f1, accuracy
 
-# Step 8: Evaluate performance metrics from OSSEC alerts
+# Step 7: Evaluate performance metrics from OSSEC alerts
 def parse_ossec_alerts(log_file):
     if not os.path.exists(log_file):
         print(f"Log file '{log_file}' does not exist.")
@@ -169,7 +153,7 @@ def evaluate_performance(alerts):
     }
 
 if __name__ == "__main__":
-    # Convert ADFA text files to log files
+    # Step 1: Convert ADFA text files to log files
     training_data_dir = '/home/user/adfa-ld/training_data'
     validation_data_dir = '/home/user/adfa-ld/validation_data'
     attack_data_dir = '/home/user/adfa-ld/attack_data'
@@ -178,17 +162,11 @@ if __name__ == "__main__":
     convert_to_logs(validation_data_dir, '/var/log/adfa-la-validation')
     convert_to_logs(attack_data_dir, '/var/log/adfa-la-attack')
 
-    # Preprocess ADFA LD data
-    base_dir = "/home/user/adfa-ld"
-    preprocess_adfa_ld(os.path.join(base_dir, "attack_data"), os.path.join(base_dir, "preprocessed/attack_data"))
-    preprocess_adfa_ld(os.path.join(base_dir, "training_data"), os.path.join(base_dir, "preprocessed/training_data"))
-    preprocess_adfa_ld(os.path.join(base_dir, "validation_data"), os.path.join(base_dir, "preprocessed/validation_data"))
-
-    # Read and process log files
+    # Step 2: Read and process log files
     log_directory = '/var/log/adfa-la-training'  # Ensure this path is correct
     read_log_files(log_directory)
 
-    # Read and process NetFlow data
+    # Step 3: Read and process NetFlow data
     netflow_directory = "/home/user/adfa-la/netflow_ids_label/netflow_ids_label/Training_Data_Master"
     df = read_netflow_files(netflow_directory)
     if not df.empty:
@@ -197,7 +175,7 @@ if __name__ == "__main__":
     else:
         print("No data to process.")
 
-    # Analyze OSSEC alerts
+    # Step 4: Analyze OSSEC alerts
     alerts_log = '/var/ossec/logs/alerts/alerts.log'
     alerts = parse_alerts(alerts_log)
     if alerts:
@@ -205,7 +183,7 @@ if __name__ == "__main__":
     else:
         print("No alerts to analyze.")
 
-    # Evaluate IDS performance
+    # Step 5: Evaluate IDS performance
     data = np.random.randn(1000, 10)  # Example data matrix
     labels = np.random.randint(2, size=1000)  # Example binary labels
 
@@ -240,7 +218,7 @@ if __name__ == "__main__":
     print("Mean F1 Score:", mean_f1)
     print("Mean Accuracy:", mean_accuracy)
 
-    # Evaluate performance metrics from OSSEC alerts
+    # Step 6: Evaluate performance metrics from OSSEC alerts
     alerts = parse_ossec_alerts(alerts_log)
     if alerts:
         metrics = evaluate_performance(alerts)
